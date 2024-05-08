@@ -1,0 +1,100 @@
+---
+title: 'Avance 1: Reto'
+author: "Equipo #9"
+date: "2022-09-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Librerías
+```{r}
+
+library(sampling)
+
+```
+
+
+# Bases de Datos (backup)
+```{r}
+
+# Importar "220914COVID19MEXICOpositivos.csv".
+  dataCONTROL = read.csv('220914COVID19MEXICOpositivos.csv', encoding = "UTF-8")
+
+```
+
+
+
+# Datos trabajables
+```{r}
+
+# Generar variable de control (checkpoint).
+  data = dataCONTROL
+
+```
+
+
+# Formato preliminar de datos
+```{r}
+
+# Convertir Fecha de ingreso a data type: date.
+  data$FECHA_INGRESO = as.Date(data$FECHA_INGRESO)
+# Remplazar "9999-99-99" (root: FECHA_DEF) con "9999-12-31".
+  data$FECHA_DEF[data$FECHA_DEF == "9999-99-99"] = as.character("9999-12-31")
+# Convertir Fecha de defunción a data type: date.
+  data$FECHA_DEF = as.Date(data$FECHA_DEF)
+# Convertir Feca de sintomas a data type: date.
+  data$FECHA_SINTOMAS = as.Date(data$FECHA_SINTOMAS)
+  
+
+```
+
+
+
+# Depuración de los datos
+```{r}
+
+# Eliminar entradas con datos ausentes.
+  dataD = na.omit(data)
+# # Eliminar errores de FECHA_DEF.
+   d_Hospitalizacion = data$FECHA_DEF - data$FECHA_INGRESO
+   d_Sintomas = data$FECHA_DEF - data$FECHA_SINTOMAS
+   dataD = subset(dataD, d_Hospitalizacion > 0)
+   dataD = subset(dataD, d_Sintomas > 0)
+# # Mantener solo datos de resultados de casos de SARS-COV-2 confirmados.
+   dataD = subset(dataD, dataD$CLASIFICACION_FINAL == 3)
+# # Elminar entradas carentes de información sobre comorbilidad (diabetes).
+   dataD = subset(dataD, dataD$DIABETES!="99" & dataD$DIABETES!="98" & dataD$DIABETES!="97")
+# # Eliminar entradas carentes de información sobre intubación.
+   dataD = subset(dataD, dataD$INTUBADO!="99" & dataD$INTUBADO!="98")
+# # Eliminar entradas carentes de información sobre neumonía.
+   dataD = subset(dataD, dataD$NEUMONIA!="99" & dataD$NEUMONIA!="98")
+# # Eliminar entradas carentes de información sobre entidad federativa.
+   dataD = subset(dataD, dataD$ENTIDAD_NAC!="99" & dataD$ENTIDAD_NAC!="98" & dataD$ENTIDAD_NAC!="97")
+
+```
+
+
+
+# Muestreo
+```{r}
+
+# Generar estratos con 60,000 pacientes con la comorbilidad (diabetes) y 60,000 sin.
+  estratos = strata(dataD, stratanames = c("DIABETES"), size = c(60000, 60000), method = "srswor")
+# Generar una muestra estratificada.
+  muestra_cruda = getdata(dataD, estratos)
+# Elminiar columnas inecesarias generadas por el muestreo.
+  muestra_final = muestra_cruda[, c(-41, -42, -43)]
+  
+```
+
+
+# Exportación de base de datos
+```{r}
+# Generar archivo "PC19_Muestra_Estratificada_Tabaquismo.csv" con la muestra estratificada.
+  write.csv(muestra_final, "PC19_Muestra_Estratificada_Diabetes_FINAL.csv", row.names = FALSE, fileEncoding = "UTF-8")
+
+```
+
