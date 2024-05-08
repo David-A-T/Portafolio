@@ -1,0 +1,406 @@
+---
+title: "Etapa 3 - Análisis de Discrminante"
+author: "Equipo 5 - MA2003B.101"
+date: "2023-09-01"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Preparación del Ambiente
+```{r}
+# Importar Librarías
+library(MASS)
+
+set.seed(12345)
+```
+
+### Cargar Datos
+```{r}
+# Etiquetas de clase
+flags = subset(read.csv("FLAGS.csv", encoding = "UTF-8"), select = -1)
+head(flags)
+
+# Set de Datos
+data = subset(read.csv("DATOS HISTÓRICOS 2022_2023_TODAS ESTACIONES CONCATENADOS LIMPIOS.csv", encoding = "UTF-8"), select = -1)
+head(data)
+```
+### Restructurar Dataset
+```{r}
+# Variables predictoras
+predictive = subset(data, select=c(4, 5, 6, 7, 8, 9, 10, 11))
+head(predictive)
+```
+
+```{r}
+data_merged = cbind(flags, predictive)
+
+data_merged_1 = data_merged[data_merged$ubi == 1,]
+data_merged_2 = data_merged[data_merged$ubi == 2,]
+data_merged_3 = data_merged[data_merged$ubi == 3,]
+data_merged_4 = data_merged[data_merged$ubi == 4,]
+data_merged_5 = data_merged[data_merged$ubi == 5,]
+data_merged_6 = data_merged[data_merged$ubi == 6,]
+data_merged_7 = data_merged[data_merged$ubi == 7,]
+data_merged_8 = data_merged[data_merged$ubi == 8,]
+data_merged_9 = data_merged[data_merged$ubi == 9,]
+data_merged_10 = data_merged[data_merged$ubi == 10,]
+data_merged_11 = data_merged[data_merged$ubi == 11,]
+data_merged_12 = data_merged[data_merged$ubi == 12,]
+data_merged_13 = data_merged[data_merged$ubi == 13,]
+data_merged_14 = data_merged[data_merged$ubi == 14,]
+data_merged_15 = data_merged[data_merged$ubi == 15,]
+```
+
+### Segmentación de los Datos
+```{r}
+# Instance 1
+sample_1 = sample(c(TRUE, FALSE), nrow(data_merged_1), replace=TRUE, prob=c(0.7,0.3))
+train_1 = data_merged_1[sample_1,]
+test_1 = data_merged_1[!sample_1,]
+
+# Instance 2
+sample_2 = sample(c(TRUE, FALSE), nrow(data_merged_2), replace=TRUE, prob=c(0.7, 0.3))
+train_2 = data_merged_2[sample_2,]
+test_2 = data_merged_2[!sample_2,]
+
+# Instance 3
+sample_3 = sample(c(TRUE, FALSE), nrow(data_merged_3), replace=TRUE, prob=c(0.7, 0.3))
+train_3 = data_merged_3[sample_3,]
+test_3 = data_merged_3[!sample_3,]
+
+# Instance 4
+sample_4 = sample(c(TRUE, FALSE), nrow(data_merged_4), replace=TRUE, prob=c(0.7, 0.3))
+train_4 = data_merged_4[sample_4,]
+test_4 = data_merged_4[!sample_4,]
+
+# Instance 5
+sample_5 = sample(c(TRUE, FALSE), nrow(data_merged_5), replace=TRUE, prob=c(0.7, 0.3))
+train_5 = data_merged_5[sample_5,]
+test_5 = data_merged_5[!sample_5,]
+
+# Instance 6
+sample_6 = sample(c(TRUE, FALSE), nrow(data_merged_6), replace=TRUE, prob=c(0.7, 0.3))
+train_6 = data_merged_6[sample_6,]
+test_6 = data_merged_6[!sample_6,]
+
+# Instance 7
+sample_7 = sample(c(TRUE, FALSE), nrow(data_merged_7), replace=TRUE, prob=c(0.7, 0.3))
+train_7 = data_merged_7[sample_7,]
+test_7 = data_merged_7[!sample_7,]
+
+# Instance 8
+sample_8 = sample(c(TRUE, FALSE), nrow(data_merged_8), replace=TRUE, prob=c(0.7, 0.3))
+train_8 = data_merged_8[sample_8,]
+test_8 = data_merged_8[!sample_8,]
+
+# Instance 9
+sample_9 = sample(c(TRUE, FALSE), nrow(data_merged_9), replace=TRUE, prob=c(0.7, 0.3))
+train_9 = data_merged_9[sample_9,]
+test_9 = data_merged_9[!sample_9,]
+
+# Instance 10
+sample_10 = sample(c(TRUE, FALSE), nrow(data_merged_10), replace=TRUE, prob=c(0.7, 0.3))
+train_10 = data_merged_10[sample_10,]
+test_10 = data_merged_10[!sample_10,]
+
+# Instance 11
+sample_11 = sample(c(TRUE, FALSE), nrow(data_merged_11), replace=TRUE, prob=c(0.7, 0.3))
+train_11 = data_merged_11[sample_11,]
+test_11 = data_merged_11[!sample_11,]
+
+# Instance 12
+sample_12 = sample(c(TRUE, FALSE), nrow(data_merged_12), replace=TRUE, prob=c(0.7, 0.3))
+train_12 = data_merged_12[sample_12,]
+test_12 = data_merged_12[!sample_12,]
+
+# Instance 13
+sample_13 = sample(c(TRUE, FALSE), nrow(data_merged_13), replace=TRUE, prob=c(0.7, 0.3))
+train_13 = data_merged_13[sample_13,]
+test_13 = data_merged_13[!sample_13,]
+
+# Instance 14
+sample_14 = sample(c(TRUE, FALSE), nrow(data_merged_14), replace=TRUE, prob=c(0.7, 0.3))
+train_14 = data_merged_14[sample_14,]
+test_14 = data_merged_14[!sample_14,]
+
+# Instance 15
+sample_15 = sample(c(TRUE, FALSE), nrow(data_merged_15), replace=TRUE, prob=c(0.7, 0.3))
+train_15 = data_merged_15[sample_15,]
+test_15 = data_merged_15[!sample_15,]
+```
+
+
+### Modelado | Análisis Discriminante Lineal
+##### Modelo: PM10 | 1
+```{r}
+# Modelado
+lda.model.PM10_1 = lda(PM10~PRS+RH+TOUT+WSR+WDR+RAINF+SR, data=train_1)
+lda.model.PM10_1
+
+# Predicciones
+predictions_PM10_1 = predict(lda.model.PM10_1, newdata = test_1)
+predicted_classPM10_1 = predictions_PM10_1$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T1 = table(pred=predicted_classPM10_1, true=test_1$PM10)
+rownames(T1) = c("G", "B")
+colnames(T1) = c("G", "B")
+T1
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_1==test_1$PM10))
+precission1 = T1[2,2]/(T1[2,2]+T1[2,1])
+cat("\nPrecisión: ", precission1)
+recall1 = T1[2,2]/(T1[2,2]+T1[1,2])
+cat("\nSensbilidad: ", recall1)
+cat("\nF1 Scores: ", 2*(precission1*recall1)/(precission1+recall1))
+```
+
+##### Modelo: PM10 | 3
+```{r}
+# Modelado
+lda.model.PM10_3 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_3)
+lda.model.PM10_3
+
+# Predicciones
+predictions_PM10_3 = predict(lda.model.PM10_3, newdata = test_3)
+predicted_classPM10_3 = predictions_PM10_3$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T3 = table(pred=predicted_classPM10_3, true=test_3$PM10)
+rownames(T3) = c("G", "B")
+colnames(T3) = c("G", "B")
+T3
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_3==test_3$PM10))
+precission3 = T3[2,2]/(T3[2,2]+T3[2,1])
+cat("\nPrecisión: ", precission3)
+recall3 = T3[2,2]/(T3[2,2]+T3[1,2])
+cat("\nSensbilidad: ", recall3)
+cat("\nF1 Scores: ", 2*(precission3*recall3)/(precission3+recall3))
+```
+
+##### Modelo: PM10 | 5
+```{r}
+lda.model.PM10_5 = lda(PM10~PRS+RH+TOUT+WSR+WDR+RAINF+SR, data=train_5)
+lda.model.PM10_5
+
+# Predicciones
+predictions_PM10_5 = predict(lda.model.PM10_5, newdata = test_5)
+predicted_classPM10_5 = predictions_PM10_5$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T5 = table(pred=predicted_classPM10_5, true=test_5$PM10)
+rownames(T5) = c("G", "B")
+colnames(T5) = c("G", "B")
+T5
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_5==test_5$PM10))
+precission5 = T5[2,2]/(T5[2,2]+T5[2,1])
+cat("\nPrecisión: ", precission5)
+recall5 = T5[2,2]/(T5[2,2]+T5[1,2])
+cat("\nSensbilidad: ", recall5)
+cat("\nF1 Scores: ", 2*(precission5*recall5)/(precission5+recall5))
+```
+
+##### Modelo: PM10 | 6
+```{r}
+lda.model.PM10_6 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_6)
+lda.model.PM10_6
+
+# Predicciones
+predictions_PM10_6 = predict(lda.model.PM10_6, newdata = test_6)
+predicted_classPM10_6 = predictions_PM10_6$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T6 = table(pred=predicted_classPM10_6, true=test_6$PM10)
+rownames(T6) = c("G", "B")
+colnames(T6) = c("G", "B")
+T6
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_6==test_6$PM10))
+precission6 = T6[2,2]/(T6[2,2]+T6[2,1])
+cat("\nPrecisión: ", precission6)
+recall6 = T6[2,2]/(T6[2,2]+T6[1,2])
+cat("\nSensbilidad: ", recall6)
+cat("\nF1 Scores: ", 2*(precission6*recall6)/(precission6+recall6))
+```
+
+##### Modelo: PM10 | 7
+```{r}
+lda.model.PM10_7 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_7)
+lda.model.PM10_7
+
+# Predicciones
+predictions_PM10_7 = predict(lda.model.PM10_7, newdata = test_7)
+predicted_classPM10_7 = predictions_PM10_7$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T7 = table(pred=predicted_classPM10_7, true=test_7$PM10)
+rownames(T7) = c("G", "B")
+colnames(T7) = c("G", "B")
+T7
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_7==test_7$PM10))
+precission7 = T7[2,2]/(T7[2,2]+T7[2,1])
+cat("\nPrecisión: ", precission7)
+recall7 = T7[2,2]/(T7[2,2]+T7[1,2])
+cat("\nSensbilidad: ", recall7)
+cat("\nF1 Scores: ", 2*(precission7*recall7)/(precission7+recall7))
+```
+
+##### Modelo: PM10 | 8
+```{r}
+lda.model.PM10_8 = lda(PM10~PRS+RH+TOUT+WSR+WDR+RAINF+SR, data=train_8)
+lda.model.PM10_8
+
+# Predicciones
+predictions_PM10_8 = predict(lda.model.PM10_8, newdata = test_8)
+predicted_classPM10_8 = predictions_PM10_8$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T8 = table(pred=predicted_classPM10_8, true=test_8$PM10)
+rownames(T8) = c("G", "B")
+colnames(T8) = c("G", "B")
+T8
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_8==test_8$PM10))
+precission8 = T8[2,2]/(T8[2,2]+T8[2,1])
+cat("\nPrecisión: ", precission8)
+recall8 = T8[2,2]/(T8[2,2]+T8[1,2])
+cat("\nSensbilidad: ", recall8)
+cat("\nF1 Scores: ", 2*(precission8*recall8)/(precission8+recall8))
+```
+
+##### Modelo: PM10 | 9
+```{r}
+lda.model.PM10_9 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_9)
+lda.model.PM10_9
+
+# Predicciones
+predictions_PM10_9= predict(lda.model.PM10_9, newdata = test_9)
+predicted_classPM10_9 = predictions_PM10_9$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T9 = table(pred=predicted_classPM10_9, true=test_9$PM10)
+rownames(T9) = c("G", "B")
+colnames(T9) = c("G", "B")
+T9
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_9==test_9$PM10))
+precission9 = T9[2,2]/(T9[2,2]+T9[2,1])
+cat("\nPrecisión: ", precission9)
+recall9 = T9[2,2]/(T9[2,2]+T9[1,2])
+cat("\nSensbilidad: ", recall9)
+cat("\nF1 Scores: ", 2*(precission9*recall9)/(precission9+recall9))
+```
+
+
+### Modelado | Análisis Discriminante Lineal
+##### Modelo: PM10 | 10
+```{r}
+lda.model.PM10_10 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_10)
+lda.model.PM10_10
+
+# Predicciones
+predictions_PM10_10 = predict(lda.model.PM10_10, newdata = test_10)
+predicted_classPM10_10 = predictions_PM10_10$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T10 = table(pred=predicted_classPM10_10, true=test_10$PM10)
+rownames(T10) = c("G", "B")
+colnames(T10) = c("G", "B")
+T10
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_10==test_10$PM10))
+precission10 = T10[2,2]/(T10[2,2]+T10[2,1])
+cat("\nPrecisión: ", precission10)
+recall10 = T10[2,2]/(T10[2,2]+T10[1,2])
+cat("\nSensbilidad: ", recall10)
+cat("\nF1 Scores: ", 2*(precission10*recall10)/(precission10+recall10))
+```
+
+
+##### Modelo: PM10 | 11
+```{r}
+lda.model.PM10_11 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_11)
+lda.model.PM10_11
+
+# Predicciones
+predictions_PM10_11 = predict(lda.model.PM10_11, newdata = test_11)
+predicted_classPM10_11 = predictions_PM10_11$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T11 = table(pred=predicted_classPM10_11, true=test_11$PM10)
+rownames(T11) = c("G", "B")
+colnames(T11) = c("G", "B")
+T11
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_11==test_11$PM10))
+precission11 = T11[2,2]/(T11[2,2]+T11[2,1])
+cat("\nPrecisión: ", precission1)
+recall11 = T11[2,2]/(T11[2,2]+T11[1,2])
+cat("\nSensbilidad: ", recall11)
+cat("\nF1 Scores: ", 2*(precission11*recall11)/(precission11+recall11))
+```
+
+##### Modelo: PM10 | 12
+```{r}
+lda.model.PM10_12 = lda(PM10~PRS+RH+TOUT+WSR+WDR+RAINF+SR, data=train_12)
+lda.model.PM10_12
+
+# Predicciones
+predictions_PM10_12 = predict(lda.model.PM10_12, newdata = test_12)
+predicted_classPM10_12 = predictions_PM10_12$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T12 = table(pred=predicted_classPM10_12, true=test_12$PM10)
+rownames(T12) = c("G", "B")
+colnames(T12) = c("G", "B")
+T12
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_12==test_12$PM10))
+precission12 = T12[2,2]/(T12[2,2]+T12[2,1])
+cat("\nPrecisión: ", precission12)
+recall12 = T12[2,2]/(T12[2,2]+T12[1,2])
+cat("\nSensbilidad: ", recall12)
+cat("\nF1 Scores: ", 2*(precission12*recall12)/(precission12+recall12))
+```
+
+
+##### Modelo: PM10 | 13
+```{r}
+lda.model.PM10_13 = lda(PM10~PRS+RH+TOUT+WSR+WDR+SR, data=train_13)
+lda.model.PM10_13
+
+# Predicciones
+predictions_PM10_13 = predict(lda.model.PM10_13, newdata = test_13)
+predicted_classPM10_13 = predictions_PM10_13$class
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T13 = table(pred=predicted_classPM10_13, true=test_13$PM10)
+rownames(T13) = c("G", "B")
+colnames(T13) = c("G", "B")
+T13
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted_classPM10_13==test_1$PM10))
+precission13 = T13[2,2]/(T13[2,2]+T13[2,1])
+cat("\nPrecisión: ", precission13)
+recall13 = T13[2,2]/(T13[2,2]+T13[1,2])
+cat("\nSensbilidad: ", recall13)
+cat("\nF1 Scores: ", 2*(precission13*recall13)/(precission13+recall13))
+```
+

@@ -1,0 +1,119 @@
+---
+title: "Etapa 3 - Análisis de Regresión Logística"
+author: "Equipo 5 - MA2003B.101"
+date: "2023-09-09"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+set.seed(12345)
+```
+
+
+### Cargar Datos
+```{r}
+# Etiquetas de clase
+flags = subset(read.csv("FLAGS.csv", encoding = "UTF-8"), select = -1)
+head(flags)
+
+# Set de Datos
+data = subset(read.csv("DATOS HISTÓRICOS 2022_2023_TODAS ESTACIONES CONCATENADOS LIMPIOS.csv", encoding = "UTF-8"), select = -1)
+head(data)
+```
+
+### Restructurar Dataset
+```{r}
+# Variables predictoras
+predictive = subset(data, select=c(4, 5, 6, 7, 8, 9, 10))
+head(predictive)
+```
+
+```{r}
+# Unificar set de datos | Etiquetas de clase & Variables predictoras
+data_merged = cbind(flags, predictive)
+
+head(data_merged)
+```
+
+### Segmentación de los Datos
+```{r}
+#Usar 70% de los datos para entrenamiento y el 30% restante para pruebas
+sample = sample(c(TRUE, FALSE), nrow(data_merged), replace=TRUE, prob=c(0.7,0.3))
+
+train = data_merged[sample,]
+test = data_merged[!sample,]
+```
+
+```{r}
+summary(train)
+```
+
+### Modelado PM10 | Análisis Regresión Logística Multiple
+```{r}
+#Ajuste del modelo
+model = glm(PM10~PRS+RH+TOUT+WSR+WDR+RAINF+SR, family="binomial", data=train)
+
+#para la notación científica en el resumen
+options(scipen=999)
+
+#resumen del modelo
+summary(model)
+```
+### Evaluación del Modelo
+```{r}
+prob_test=predict(model, test, type="response")
+
+library(MKclass)
+optCutoff(prob_test, truth=test$PM10, namePos = 1)[1]
+```
+```{r}
+predicted.classes=ifelse(prob_test > 0.37, 1, 0)
+
+cat("\n\nMétricas de Evaluación: \n\n")
+# Matriz de Confusión
+cat("Matriz de confusión:\n")
+T1 = table(pred=predicted.classes, true=test$PM10)
+rownames(T1) = c("G", "B")
+colnames(T1) = c("G", "B")
+T1
+cat("\nPorcentaje de observaciones clasificadas erróneamente: ", 1-mean(predicted.classes==test$PM10))
+precission1 = T1[2,2]/(T1[2,2]+T1[2,1])
+cat("\nPrecisión: ", precission1)
+recall1 = T1[2,2]/(T1[2,2]+T1[1,2])
+cat("\nSensbilidad: ", recall1)
+cat("\nF1 Scores: ", 2*(precission1*recall1)/(precission1+recall1))
+```
+
+### Verificación de Supuestos
+```{r}
+# Indendencia
+n = length(model$residuals)
+plot(c(1:n), model$residuals, col="blue")
+abline(h=0, col="red")
+```
+```{r}
+n <- length(model$residuals)
+plot(c(1:n), model$residuals, col="blue", ylim=c(-20, 20))
+abline(h=0, col="red")
+```
+
+```{r}
+# Multicolinealidad
+library(car)
+vif(model)
+```
+```{r}
+# Relación Lineal
+library(car)
+res = model$residuals
+
+model_res = lm(res ~ PRS+RH+TOUT+WSR+WDR+RAINF+SR, data = train)
+summary(model_res)
+
+```
+
+
